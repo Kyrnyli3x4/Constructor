@@ -11,13 +11,12 @@ Route::get('/', function () {
     ]);
 })->name('home');
 
-Route::resource('bots', BotController::class);
+Route::resource('bots', BotController::class)->middleware(['auth', 'verified']);
 
 Route::get('/dashboard', function () {
-    $bot = auth()->user()->bots()->with('profile')->first();
-
+    $bots = auth()->user()->bots()->with('profile')->get();
     return Inertia::render('dashboard', [
-        'bot_get' => $bot,
+        'Bots' => $bots,
     ]);
 })->middleware(['auth', 'verified'])->name('dashboard');
 

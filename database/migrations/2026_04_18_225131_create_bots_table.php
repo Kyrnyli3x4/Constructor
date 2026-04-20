@@ -9,7 +9,7 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    public function up(): void // TODO: добавить платформу
+    public function up(): void
     {
         Schema::create('bots', function (Blueprint $table) {
             $table->id();
