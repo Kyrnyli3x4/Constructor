@@ -6,6 +6,7 @@ use App\Http\Requests\StoreBotRequest;
 use App\Models\BotModel\Bot;
 use App\Models\BotModel\BotProfile;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Inertia\Inertia;
 
@@ -32,7 +33,7 @@ class BotController extends Controller
      */
     public function store(StoreBotRequest $request)
     {
-        $response = Http::withoutVerifying()->get("https://api.telegram.org/bot{$request->token}/getMe"); //FIXME: исправить, потому что данный метод не использует SSL
+        $response = Http::withoutVerifying()->get("https://api.telegram.org/bot{$request->token}/getMe"); // FIXME: исправить, потому что данный метод не использует SSL
 
         if ($response->successful() && $response->status() == 200) {
             $bot = Bot::create([
@@ -45,14 +46,20 @@ class BotController extends Controller
             BotProfile::create([
                 'bot_id' => $bot->id,
                 'username' => $response->json('result.username'),
-                'settings' => json_encode([]), // или null, или массив по умолчанию
+                'settings' => json_encode([
+                    'name' => $response->json('result.first_name').' '.$response->json('result.last_name'),
+                    'status' => 'active',
+                    // 'description' => $response->json('result.description'),
+                ]), // или null, или массив по умолчанию
             ]);
-            $bot = auth()->user()->bots()->with('profile')->first();
+            $bots = auth()->user()->bots()->with('profile')->get();
+
             return Inertia::render('dashboard', [
                 'bot_get' => $bot,
             ]);
 
         }
+
         return back()->withErrors(['token' => 'Неверный токен бота.']);
     }
 
@@ -77,7 +84,7 @@ class BotController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        dd($request);
     }
 
     /**
@@ -85,6 +92,10 @@ class BotController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $delete = DB::table('bots')->where('id', $id)->delete();
+
+        return Inertia::render('dashboard', [
+            'delete' => $delete,
+        ]);
     }
 }
