@@ -1,10 +1,11 @@
 import { Link } from '@inertiajs/react';
-import { BookOpen, Folder, LayoutGrid } from 'lucide-react';
+import { BookOpen, Folder, LayoutGrid, SquarePen } from 'lucide-react';
 import { NavFooter } from '@/components/nav-footer';
 import { NavMain } from '@/components/nav-main';
 import { NavUser } from '@/components/nav-user';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem, } from '@/components/ui/sidebar';
 import { dashboard } from '@/routes';
+import editor from '@/routes/editor/index.ts';
 import AppLogo from './app-logo';
 
 const mainNavItems = [
@@ -13,6 +14,11 @@ const mainNavItems = [
         href: dashboard(),
         icon: LayoutGrid,
     },
+    {
+        title: 'Editor',
+        href: editor.index(),
+        icon: SquarePen,
+    }
 
 ];
 

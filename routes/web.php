@@ -20,4 +20,8 @@ Route::get('/dashboard', function () {
     ]);
 })->middleware(['auth', 'verified'])->name('dashboard');
 
+Route::get('editor', function () {
+    return Inertia::render('editor/index', []);
+})->middleware(['auth', 'verified'])->name('editor.index');
+
 require __DIR__.'/settings.php';
