@@ -5,7 +5,6 @@ import { useState, useEffect, useRef } from 'react';
 import AppLayout from '@/layouts/app-layout.jsx';
 import Canvas from '@/pages/editor/components/Canvas.jsx';
 import Toolbar from '@/pages/editor/components/Toolbar.jsx';
-import Editors from '@/pages/editor/test.jsx';
 
 const breadcrumbs = [{ title: 'Editor' }];
 
@@ -68,7 +67,6 @@ export default function Editor() {
                     <Toolbar ref={toolbarRef} position={toolbarPosition} />
                 </DndContext>
                 <Canvas />
-                <Editors/>
             </div>
         </AppLayout>
     );
