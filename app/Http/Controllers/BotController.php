@@ -33,7 +33,7 @@ class BotController extends Controller
      */
     public function store(StoreBotRequest $request)
     {
-        $response = Http::withoutVerifying()->get("https://api.telegram.org/bot{$request->token}/getMe"); // FIXME: исправить, потому что данный метод не использует SSL
+        $response = Http::get("https://api.telegram.org/bot{$request->token}/getMe");
 
         if ($response->successful() && $response->status() == 200) {
             $bot = Bot::create([
