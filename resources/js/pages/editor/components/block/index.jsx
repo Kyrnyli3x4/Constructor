@@ -1,7 +1,7 @@
 import React from 'react';
+import TextPreview from './TextPreview.jsx';
 
-export default function Block({ children, id, open }) {
-    // Check if there are any valid children (ignores empty fragments, null, undefined)
+export default function Block({ children, id, open, message }) {
     const hasContent = React.Children.count(children) > 0;
 
     return (
@@ -22,6 +22,8 @@ export default function Block({ children, id, open }) {
         >
             {hasContent ? (
                 children
+            ) : message ? (
+                <TextPreview message={message} />
             ) : (
                 <div className="flex w-full h-full p-4 text-muted-foreground text-sm italic justify-center items-center">
                     Add items to menu

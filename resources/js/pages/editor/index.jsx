@@ -3,14 +3,40 @@ import { restrictToWindowEdges } from '@dnd-kit/modifiers';
 import { Head } from '@inertiajs/react';
 import { useState, useEffect, useRef } from 'react';
 import AppLayout from '@/layouts/app-layout.jsx';
-import Canvas from '@/pages/editor/components/Canvas.jsx';
+import Canvas from '@/pages/editor/components/canvas/index.jsx';
 import Toolbar from '@/pages/editor/components/Toolbar.jsx';
+
 const breadcrumbs = [{ title: 'Editor' }];
 
-export default function Editor() {
+const getInitialBotId = (bots) => {
+    const savedBotId = localStorage.getItem('editor_selected_bot_id');
+    const botId = savedBotId ? parseInt(savedBotId) : null;
+    if (botId && bots.some(b => b.id === botId)) {
+        return botId;
+    }
+    return null;
+}
+
+export default function Editor({ bots }) {
     const sensors = useSensors(useSensor(PointerSensor));
     const [toolbarPosition, setToolbarPosition] = useState({ x: 0, y: 20 });
+    const [selectedBotId, setSelectedBotId] = useState(() => getInitialBotId(bots));
     const toolbarRef = useRef(null);
+
+    // Обновляем selectedBotId если бот был удален
+    useEffect(() => {
+        if (selectedBotId && !bots.some(b => b.id === selectedBotId)) {
+            // eslint-disable-next-line react-hooks/set-state-in-effect
+            setSelectedBotId(null);
+            localStorage.removeItem('editor_selected_bot_id');
+        }
+    }, [bots, selectedBotId]);
+
+    // Сохраняем выбор бота в localStorage
+    const handleSelectBot = (botId) => {
+        setSelectedBotId(botId);
+        localStorage.setItem('editor_selected_bot_id', botId.toString());
+    };
 
     // Установка начальной позиции по центру
     useEffect(() => {
@@ -57,16 +83,18 @@ export default function Editor() {
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Editor" />
-            <div className="flex flex-row h-full">
+            <div className="flex flex-row h-full gap-6 p-4">
                 <div className="relative flex h-full flex-1 flex-col overflow-hidden rounded-xl">
-                    <DndContext
-                        sensors={sensors}
-                        modifiers={[restrictToWindowEdges]}
-                        onDragEnd={handleDragEnd}
-                    >
-                        <Toolbar ref={toolbarRef} position={toolbarPosition} />
-                    </DndContext>
-                    <Canvas />
+                    {selectedBotId ? (
+                        <DndContext
+                            sensors={sensors}
+                            modifiers={[restrictToWindowEdges]}
+                            onDragEnd={handleDragEnd}
+                        >
+                            <Toolbar ref={toolbarRef} position={toolbarPosition} />
+                        </DndContext>
+                    ) : null}
+                    <Canvas botId={selectedBotId} bots={bots} onSelectBot={handleSelectBot} />
                 </div>
             </div>
         </AppLayout>

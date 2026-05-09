@@ -41,5 +41,4 @@ const Toolbar = forwardRef(({ position }, ref) => {
     );
 })
 
-
 export default Toolbar

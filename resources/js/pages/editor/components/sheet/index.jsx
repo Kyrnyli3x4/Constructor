@@ -14,82 +14,63 @@ import {
 
 export default function Sheets({
                                    open,
-                                   onClose,               // called when sheet should close
-                                   onAddTextElement,      // receives { text: string }
-                                   onAddButtonElement,    // receives { label: string, onClick? }
-                                   initialMessage = "Enter your text here..."
+                                   onClose,
+                                   blockId,
+                                   isFirst,
+                                   onValidate,
+                                   initialMessage = "",
+                                   initialCommand = ""
                                }) {
     const [message, setMessage] = useState(initialMessage)
-    const [feedback, setFeedback] = useState("")
+    const [command, setCommand] = useState(initialCommand)
 
-    // Helper to show temporary feedback
-    const showFeedback = (msg) => {
-        setFeedback(msg)
-        setTimeout(() => setFeedback(""), 2000)
-    }
-
-    const handleAddText = () => {
-        if (message.trim()) {
-            onAddTextElement?.({ text: message })
-            showFeedback("✅ Text element added")
-            // Do NOT close – allows adding more
-        } else {
-            showFeedback("⚠️ Please enter a message first")
-        }
-    }
-
-    const handleAddButton = () => {
-        if (message.trim()) {
-            onAddButtonElement?.({ label: message, onClick: () => alert(message) })
-            showFeedback("🔘 Button element added")
-        } else {
-            showFeedback("⚠️ Please enter a label for the button")
-        }
-    }
+    const handleSave = () => {
+        // Здесь можно сохранить данные
+        onValidate(blockId, { message, command });
+        onClose();
+    };
 
     return (
         <Sheet open={open} onOpenChange={onClose}>
             <SheetContent className="flex flex-col gap-4">
                 {/* Header with its own close (X) – already provided by SheetContent */}
                 <SheetHeader>
-                    <SheetTitle>Field edit message</SheetTitle>
+                    <SheetTitle>Создания сообщений</SheetTitle>
                     <SheetDescription>
-                        Add a text message or turn it into an interactive button.
+                        Добавте модули для вашего уникального сообщения
                     </SheetDescription>
                 </SheetHeader>
 
-                {/* Main content */}
                 <div className="grid flex-1 auto-rows-min gap-5 px-4">
+                    {isFirst && (
+                        <div className="grid gap-3">
+                            <Label htmlFor="command">Команда</Label>
+                            <Input
+                                id="command"
+                                value={command}
+                                onChange={(e) => setCommand(e.target.value)}
+                                placeholder="/start"
+                                autoFocus
+                            />
+                        </div>
+                    )}
                     <div className="grid gap-3">
-                        <Label htmlFor="sheet-demo-name">Message / Button label</Label>
+                        <Label htmlFor="sheet-demo-name">Сообщение</Label>
                         <Input
                             id="sheet-demo-name"
                             value={message}
                             onChange={(e) => setMessage(e.target.value)}
-                            placeholder="e.g., Click me or Hello world"
-                            autoFocus
+                            placeholder="Впишите ваше сообщение"
                         />
                     </div>
-
-                    {/* Feedback area for UX */}
-                    {feedback && (
-                        <div className="text-sm text-muted-foreground text-center">
-                            {feedback}
-                        </div>
-                    )}
                 </div>
 
                 {/* Footer with two creation buttons + close button */}
                 <SheetFooter className="flex-col sm:flex-row gap-2">
-                    <Button onClick={handleAddText} variant="outline" className="flex-1">
-                        + Add text element
-                    </Button>
-                    <Button onClick={handleAddButton} variant="default" className="flex-1">
-                        + Add button element
-                    </Button>
+                    <Button onClick={handleSave}>Сохранить</Button>
                     <SheetClose asChild>
                         <Button variant="secondary" onClick={onClose}>
-                            Close
+                            Закрыть
                         </Button>
                     </SheetClose>
                 </SheetFooter>
