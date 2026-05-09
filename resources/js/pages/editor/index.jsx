@@ -7,7 +7,7 @@ import Canvas from '@/pages/editor/components/canvas/index.jsx';
 import Toolbar from '@/pages/editor/components/Toolbar.jsx';
 const breadcrumbs = [{ title: 'Editor' }];
 
-export default function Editor() {
+export default function Editor({Bots}) {
     const sensors = useSensors(useSensor(PointerSensor));
     const [toolbarPosition, setToolbarPosition] = useState({ x: 0, y: 20 });
     const toolbarRef = useRef(null);
@@ -66,7 +66,7 @@ export default function Editor() {
                     >
                         <Toolbar ref={toolbarRef} position={toolbarPosition} />
                     </DndContext>
-                    <Canvas />
+                    <Canvas bots={Bots} />
                 </div>
             </div>
         </AppLayout>

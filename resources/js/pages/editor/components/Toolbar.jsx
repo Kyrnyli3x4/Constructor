@@ -1,7 +1,12 @@
 import { useDraggable } from '@dnd-kit/core';
-import { GripVertical, ImageIcon, Plus, SquarePen } from 'lucide-react';
+import { GripVertical, ImageIcon, MessageCircle, Plus, SquarePen } from 'lucide-react';
 import { forwardRef } from 'react';
 import { Button } from '@/components/ui/button.jsx';
+import {
+    Tooltip,
+    TooltipContent,
+    TooltipTrigger,
+} from "@/components/ui/tooltip"
 
 const Toolbar = forwardRef(({ position }, ref) => {
     const { listeners, attributes, transform, isDragging } = useDraggable({
@@ -29,6 +34,16 @@ const Toolbar = forwardRef(({ position }, ref) => {
                     <GripVertical className="h-5 w-5 text-muted-foreground" />
                 </div>
                 <div className="max-h-[180px] overflow-y-auto px-2 pb-4 pt-2 flex flex-col gap-2 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:'none'] [scrollbar-width:'none']">
+
+                    <Tooltip>
+                        <TooltipTrigger asChild>
+                            <Button variant="outline" size='icon'><MessageCircle/></Button>
+                        </TooltipTrigger>
+                        <TooltipContent side="right">
+                            <p>Here is errors</p>
+                        </TooltipContent>
+                    </Tooltip>
+
                     <Button variant="outline" size="icon"><Plus /></Button>
                     <Button variant="outline" size="icon"><SquarePen /></Button>
                     <Button variant="outline" size="icon"><ImageIcon /></Button>
