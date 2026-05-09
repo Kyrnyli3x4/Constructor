@@ -5,7 +5,6 @@ import { useState, useEffect, useRef } from 'react';
 import AppLayout from '@/layouts/app-layout.jsx';
 import Canvas from '@/pages/editor/components/Canvas.jsx';
 import Toolbar from '@/pages/editor/components/Toolbar.jsx';
-
 const breadcrumbs = [{ title: 'Editor' }];
 
 export default function Editor() {
@@ -58,15 +57,17 @@ export default function Editor() {
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Editor" />
-            <div className="relative flex h-full flex-1 flex-col overflow-hidden rounded-xl">
-                <DndContext
-                    sensors={sensors}
-                    modifiers={[restrictToWindowEdges]}
-                    onDragEnd={handleDragEnd}
-                >
-                    <Toolbar ref={toolbarRef} position={toolbarPosition} />
-                </DndContext>
-                <Canvas />
+            <div className="flex flex-row h-full">
+                <div className="relative flex h-full flex-1 flex-col overflow-hidden rounded-xl">
+                    <DndContext
+                        sensors={sensors}
+                        modifiers={[restrictToWindowEdges]}
+                        onDragEnd={handleDragEnd}
+                    >
+                        <Toolbar ref={toolbarRef} position={toolbarPosition} />
+                    </DndContext>
+                    <Canvas />
+                </div>
             </div>
         </AppLayout>
     );
