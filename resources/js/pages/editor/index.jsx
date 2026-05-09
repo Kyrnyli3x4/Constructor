@@ -3,7 +3,7 @@ import { restrictToWindowEdges } from '@dnd-kit/modifiers';
 import { Head } from '@inertiajs/react';
 import { useState, useEffect, useRef } from 'react';
 import AppLayout from '@/layouts/app-layout.jsx';
-import Canvas from '@/pages/editor/components/Canvas.jsx';
+import Canvas from '@/pages/editor/components/canvas/index.jsx';
 import Toolbar from '@/pages/editor/components/Toolbar.jsx';
 const breadcrumbs = [{ title: 'Editor' }];
 
