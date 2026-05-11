@@ -3,11 +3,22 @@ import { restrictToWindowEdges } from '@dnd-kit/modifiers';
 import { Head } from '@inertiajs/react';
 import { useState, useEffect, useRef } from 'react';
 import AppLayout from '@/layouts/app-layout.jsx';
-import Canvas from '@/pages/editor/components/canvas/index.jsx';
+
+import {
+    Canvas,
+    Storage,
+    StorageContext
+} from '@/pages/editor/components/canvas/index.jsx';
+
+
 import Toolbar from '@/pages/editor/components/Toolbar.jsx';
 const breadcrumbs = [{ title: 'Editor' }];
 
-export default function Editor({Bots}) {
+export default function Editor({ Bots }) {
+    const appStorage = new Storage({
+        bots: Bots,
+    });
+
     const sensors = useSensors(useSensor(PointerSensor));
     const [toolbarPosition, setToolbarPosition] = useState({ x: 0, y: 20 });
     const toolbarRef = useRef(null);
@@ -29,7 +40,7 @@ export default function Editor({Bots}) {
             const rect = toolbarRef.current.getBoundingClientRect();
             const maxX = window.innerWidth - rect.width;
             const maxY = window.innerHeight - rect.height;
-            setToolbarPosition(prev => ({
+            setToolbarPosition((prev) => ({
                 x: Math.min(Math.max(prev.x, 0), maxX),
                 y: Math.min(Math.max(prev.y, 0), maxY),
             }));
@@ -40,7 +51,7 @@ export default function Editor({Bots}) {
 
     const handleDragEnd = (event) => {
         const { delta } = event;
-        setToolbarPosition(prev => {
+        setToolbarPosition((prev) => {
             let newX = prev.x + delta.x;
             let newY = prev.y + delta.y;
             if (toolbarRef.current) {
@@ -57,7 +68,7 @@ export default function Editor({Bots}) {
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Editor" />
-            <div className="flex flex-row h-full">
+            <div className="flex h-full flex-row">
                 <div className="relative flex h-full flex-1 flex-col overflow-hidden rounded-xl">
                     <DndContext
                         sensors={sensors}
@@ -66,7 +77,9 @@ export default function Editor({Bots}) {
                     >
                         <Toolbar ref={toolbarRef} position={toolbarPosition} />
                     </DndContext>
-                    <Canvas bots={Bots} />
+                    <StorageContext.Provider value={appStorage}>
+                        <Canvas />
+                    </StorageContext.Provider>
                 </div>
             </div>
         </AppLayout>
