@@ -25,11 +25,11 @@ import {
     normalizeRows,
 } from '@/pages/editor/components/canvas/core.jsx';
 
-function SelectBot() {
+function SelectBot({ selectedBot, setSelectedBot }) {
     const [storage] = useStorage(useContext(StorageContext));
 
     return (
-        <Select>
+        <Select value={selectedBot} onValueChange={setSelectedBot}>
             <SelectTrigger className="w-full max-w-48">
                 <SelectValue placeholder="Select a bot" />
             </SelectTrigger>
@@ -53,6 +53,9 @@ export default function Canvas({ errors, setErrors }) {
     const [open, setOpen] = useState(false);
     const [pendingRowIndex, setPendingRowIndex] = useState(0);
     const [editingBlock, setEditingBlock] = useState(null);
+    const [selectedBot, setSelectedBot] = useState(() => {
+        return localStorage.getItem('canvas-selectedBot') || '';
+    });
     const [rows, setRows] = useState(() => {
         const saved = localStorage.getItem('canvas-rows');
         return saved ? JSON.parse(saved) : [{ id: 'row-0', blocks: [] }];
@@ -62,6 +65,10 @@ export default function Canvas({ errors, setErrors }) {
     useEffect(() => {
         localStorage.setItem('canvas-rows', JSON.stringify(rows));
     }, [rows]);
+
+    useEffect(() => {
+        localStorage.setItem('canvas-selectedBot', selectedBot);
+    }, [selectedBot]);
 
     const handlerOpen = (rowIndex) => {
         setPendingRowIndex(rowIndex);
@@ -247,7 +254,12 @@ export default function Canvas({ errors, setErrors }) {
 
     return (
         <div className="flex flex-col flex-1 overflow-hidden p-6 bg-muted/30 rounded-xl gap-4">
-            <SelectBot />
+            <div>
+                <SelectBot selectedBot={selectedBot} setSelectedBot={setSelectedBot} />
+                {!selectedBot && (
+                    <p className="text-red-500 text-sm mt-1">Необходимо выбрать бота</p>
+                )}
+            </div>
 
             <div className="h-full rounded-xl border shadow-inner p-6">
                 <DndContext sensors={sensors} onDragEnd={handleDragEnd}>
