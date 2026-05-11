@@ -25,7 +25,10 @@ Route::get('/dashboard', function () {
 Route::post('/bot/webhook', [TelegramController::class, 'webhook']);
 
 Route::get('editor', function () {
-    return Inertia::render('editor/index', []);
+    $bots = auth()->user()->bots()->with('profile')->get();
+    return Inertia::render('editor/index', [
+        'Bots' => $bots,
+    ]);
 })->middleware(['auth', 'verified'])->name('editor.index');
 
 require __DIR__.'/settings.php';
