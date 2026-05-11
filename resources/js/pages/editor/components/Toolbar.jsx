@@ -8,7 +8,7 @@ import {
     TooltipTrigger,
 } from "@/components/ui/tooltip"
 
-const Toolbar = forwardRef(({ position }, ref) => {
+const Toolbar = forwardRef(({ position, errors }, ref) => {
     const { listeners, attributes, transform, isDragging } = useDraggable({
         id: 'toolbar',
     });
@@ -40,7 +40,15 @@ const Toolbar = forwardRef(({ position }, ref) => {
                             <Button variant="outline" size='icon'><MessageCircle/></Button>
                         </TooltipTrigger>
                         <TooltipContent side="right">
-                            <p>Here is errors</p>
+                            {errors.length > 0 ? (
+                                <div>
+                                    {errors.map((error, index) => (
+                                        <p key={index}>В блоке {error.blockNumber} имеется ошибка: {error.errors.join(', ')}</p>
+                                    ))}
+                                </div>
+                            ) : (
+                                <p>Нет ошибок</p>
+                            )}
                         </TooltipContent>
                     </Tooltip>
 

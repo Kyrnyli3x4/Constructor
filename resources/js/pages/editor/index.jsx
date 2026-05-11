@@ -22,6 +22,14 @@ export default function Editor({ Bots }) {
     const sensors = useSensors(useSensor(PointerSensor));
     const [toolbarPosition, setToolbarPosition] = useState({ x: 0, y: 20 });
     const toolbarRef = useRef(null);
+    const [errors, setErrors] = useState(() => {
+        const saved = localStorage.getItem('canvas-errors');
+        return saved ? JSON.parse(saved) : [];
+    });
+
+    useEffect(() => {
+        localStorage.setItem('canvas-errors', JSON.stringify(errors));
+    }, [errors]);
 
     // Установка начальной позиции по центру
     useEffect(() => {
@@ -75,10 +83,10 @@ export default function Editor({ Bots }) {
                         modifiers={[restrictToWindowEdges]}
                         onDragEnd={handleDragEnd}
                     >
-                        <Toolbar ref={toolbarRef} position={toolbarPosition} />
+                        <Toolbar ref={toolbarRef} position={toolbarPosition} errors={errors} />
                     </DndContext>
                     <StorageContext.Provider value={appStorage}>
-                        <Canvas />
+                        <Canvas errors={errors} setErrors={setErrors} />
                     </StorageContext.Provider>
                 </div>
             </div>

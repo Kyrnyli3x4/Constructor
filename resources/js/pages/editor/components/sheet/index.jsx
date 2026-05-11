@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -15,11 +15,32 @@ import { Textarea } from "@/components/ui/textarea"
 
 let nextButtonId = 1
 
-export default function Sheets({ open, onClose, onSave }) {
+export default function Sheets({ open, onClose, onSave, initialData }) {
     const [showCommand, setShowCommand] = useState(false)
     const [commandText, setCommandText] = useState('')
     const [mainMessage, setMainMessage] = useState('')
     const [buttons, setButtons] = useState([])
+
+    useEffect(() => {
+        if (!open) {
+            setShowCommand(false)
+            setCommandText('')
+            setMainMessage('')
+            setButtons([])
+            return
+        }
+
+        setShowCommand(Boolean(initialData?.command))
+        setCommandText(initialData?.command ?? '')
+        setMainMessage(initialData?.message ?? '')
+        setButtons(
+            (initialData?.buttons ?? []).map((btn) => ({
+                id: btn.id ?? nextButtonId++,
+                label: btn.label ?? '',
+                command: btn.command ?? '',
+            }))
+        )
+    }, [open, initialData])
 
     const handleAddCommand = () => setShowCommand(true)
     const handleRemoveCommand = () => {
@@ -28,18 +49,18 @@ export default function Sheets({ open, onClose, onSave }) {
     }
 
     const addButton = () => {
-        setButtons(prev => [
+        setButtons((prev) => [
             ...prev,
-            { id: nextButtonId++, label: '', command: '' }
+            { id: nextButtonId++, label: '', command: '' },
         ])
     }
 
     const removeButton = (id) => {
-        setButtons(prev => prev.filter(b => b.id !== id))
+        setButtons((prev) => prev.filter((b) => b.id !== id))
     }
 
     const updateButton = (id, field, value) => {
-        setButtons(prev => prev.map(b => b.id === id ? { ...b, [field]: value } : b))
+        setButtons((prev) => prev.map((b) => (b.id === id ? { ...b, [field]: value } : b)))
     }
 
     const handleSave = () => {
